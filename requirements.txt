@@ -1,0 +1,9 @@
+together
+groq
+openai
+anthropic
+Flask
+flask-ngrok
+pyngrok
+requests
+python-dotenv
