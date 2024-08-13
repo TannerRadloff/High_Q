@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered Research Assistant</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <h1>AI-Powered Research Assistant</h1>
+
+    <form id="searchForm">
+        <input type="text" id="searchInput" placeholder="Enter your research topic" required>
+        <button type="submit">Search</button>
+    </form>
+
+    <div id="loadingIndicator" style="display:none;">Researching and generating report... Please wait.</div>
+
+    <div id="results"></div>
+
+    <script>
+        document.getElementById('searchForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            performSearch();
+        });
+
+        function performSearch() {
+            const searchTerm = document.getElementById('searchInput').value;
+            showLoading(true);
+
+            fetch('/search', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ target: searchTerm }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                showLoading(false);
+                displayResults(data);
+            })
+            .catch(error => {
+                showLoading(false);
+                displayResults({error: 'An error occurred while processing your request.'});
+            });
+        }
+
+        function displayResults(data) {
+            const resultsDiv = document.getElementById('results');
+            if (data.error) {
+                resultsDiv.innerHTML = `<p class="error">${data.error}</p>`;
+            } else {
+                resultsDiv.innerHTML = `<h2>Research Report</h2>${data.report}`;
+            }
+        }
+
+        function showLoading(show) {
+            document.getElementById('loadingIndicator').style.display = show ? 'block' : 'none';
+        }
+    </script>
+</body>
+</html>
